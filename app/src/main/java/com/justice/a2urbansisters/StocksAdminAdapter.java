@@ -1,13 +1,10 @@
 package com.justice.a2urbansisters;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,15 +13,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.storage.FirebaseStorage;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import es.dmoral.toasty.Toasty;
 
 public class StocksAdminAdapter extends FirestoreRecyclerAdapter<Stock, StocksAdminAdapter.ViewHolder> {
 
@@ -38,7 +29,6 @@ public class StocksAdminAdapter extends FirestoreRecyclerAdapter<Stock, StocksAd
     public StocksAdminAdapter(Context context, @NonNull FirestoreRecyclerOptions<Stock> options) {
         super(options);
         this.context = context;
-        stocksAdminActivity = (StocksAdminActivity) context;
         itemClicked = (ItemClicked) context;
     }
 
@@ -50,7 +40,7 @@ public class StocksAdminAdapter extends FirestoreRecyclerAdapter<Stock, StocksAd
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.centerCrop();
         requestOptions.placeholder(R.mipmap.ic_launcher_round);
-        Glide.with(context).applyDefaultRequestOptions(requestOptions).load(model.getImageUrl());
+        Glide.with(context).applyDefaultRequestOptions(requestOptions).load(model.getImageUrl()).into(holder.imageView);
 
         setOnClickListeners(holder, position);
 
@@ -59,7 +49,7 @@ public class StocksAdminAdapter extends FirestoreRecyclerAdapter<Stock, StocksAd
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_stock, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_stock_admin, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
 
@@ -69,7 +59,7 @@ public class StocksAdminAdapter extends FirestoreRecyclerAdapter<Stock, StocksAd
         holder.deleteTxtView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                itemClicked.deleteStock(getSnapshots().getSnapshot(position),position);
+                itemClicked.deleteStock(getSnapshots().getSnapshot(position), position);
             }
         });
 
@@ -82,7 +72,6 @@ public class StocksAdminAdapter extends FirestoreRecyclerAdapter<Stock, StocksAd
 
 
     }
-
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -101,7 +90,7 @@ public class StocksAdminAdapter extends FirestoreRecyclerAdapter<Stock, StocksAd
     }
 
     public interface ItemClicked {
-        void deleteStock(DocumentSnapshot documentSnapshot,int position);
+        void deleteStock(DocumentSnapshot documentSnapshot, int position);
 
         void editStock(DocumentSnapshot documentSnapshot);
 

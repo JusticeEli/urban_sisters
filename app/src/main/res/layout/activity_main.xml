@@ -3,14 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
     <androidx.recyclerview.widget.RecyclerView
-        android:padding="8dp"
-        android:background="@android:color/darker_gray"
-        android:layout_width="match_parent"
-        tools:listitem="@layout/item_main"
         android:id="@+id/recyclerView"
-        android:layout_height="match_parent"/>
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:background="@android:color/darker_gray"
+        android:padding="8dp"
+        tools:listitem="@layout/item_main" />
+
+    <Button
+        android:id="@+id/addBtn"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:background="@drawable/button"
+        android:text="Add Product"
+        android:textAllCaps="false" />
+
 
 </LinearLayout>

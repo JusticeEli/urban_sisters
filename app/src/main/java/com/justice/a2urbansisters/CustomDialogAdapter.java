@@ -37,14 +37,14 @@ public class CustomDialogAdapter extends FirestoreRecyclerAdapter<Stock, CustomD
 
         Glide.with(context).load(model.getImageUrl()).into(holder.imageView);
 
-        holder.emailTxtView.setText(model.getName());
+        holder.nameTxtView.setText(model.getName());
         holder.priceTxtView.setText(model.getPrice()+"");
         holder.deliveredCheckBox.setChecked(model.isDelivered());
         if (model.isDelivered()) {
-            holder.deliveredCheckBox.setText("approved");
+            holder.deliveredCheckBox.setText("delivered");
 
         } else {
-            holder.deliveredCheckBox.setText("not approved");
+            holder.deliveredCheckBox.setText("not delivered");
 
         }
     }
@@ -53,7 +53,7 @@ public class CustomDialogAdapter extends FirestoreRecyclerAdapter<Stock, CustomD
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_dialog, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_dialog_original, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
 
@@ -61,13 +61,13 @@ public class CustomDialogAdapter extends FirestoreRecyclerAdapter<Stock, CustomD
 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements CompoundButton.OnCheckedChangeListener {
-        private TextView emailTxtView, priceTxtView;
+        private TextView nameTxtView, priceTxtView;
         private CheckBox deliveredCheckBox;
         private ImageView imageView;
 
         public ViewHolder(@NonNull View v) {
             super(v);
-            emailTxtView = v.findViewById(R.id.emailTxtView);
+            nameTxtView = v.findViewById(R.id.nameTxtView);
             priceTxtView = v.findViewById(R.id.priceTxtView);
             deliveredCheckBox = v.findViewById(R.id.deliveredCheckBox);
             imageView = v.findViewById(R.id.imageView);
@@ -78,7 +78,7 @@ public class CustomDialogAdapter extends FirestoreRecyclerAdapter<Stock, CustomD
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            itemClicked.approveAppointment(getSnapshots().getSnapshot(getAdapterPosition()), isChecked);
+            itemClicked.approveDelivery(getSnapshots().getSnapshot(getAdapterPosition()), isChecked);
             if (isChecked) {
                 deliveredCheckBox.setText("delivered");
 
@@ -93,7 +93,7 @@ public class CustomDialogAdapter extends FirestoreRecyclerAdapter<Stock, CustomD
 
     public interface ItemClicked {
 
-        void approveAppointment(DocumentSnapshot document, boolean approved);
+        void approveDelivery(DocumentSnapshot document, boolean approved);
 
     }
 }

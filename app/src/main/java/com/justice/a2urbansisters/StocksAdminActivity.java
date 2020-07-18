@@ -23,8 +23,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.storage.FirebaseStorage;
 
 import es.dmoral.toasty.Toasty;
+
+import static com.justice.a2urbansisters.Constants.ALL_STOCKS;
 
 public class StocksAdminActivity extends AppCompatActivity implements StocksAdminAdapter.ItemClicked {
     private StocksAdminAdapter adapter;
@@ -35,7 +38,7 @@ public class StocksAdminActivity extends AppCompatActivity implements StocksAdmi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_stocks);
+        setContentView(R.layout.activity_stocks_admin);
         setTitle("Stocks List");
 
         initwidgets();
@@ -46,7 +49,7 @@ public class StocksAdminActivity extends AppCompatActivity implements StocksAdmi
     }
 
     private void setUpRecyclerView() {
-        Query query = firebaseFirestore.collection("Students");
+        Query query = firebaseFirestore.collection(ALL_STOCKS);
         FirestoreRecyclerOptions<Stock> firestoreRecyclerOptions = new FirestoreRecyclerOptions.Builder<Stock>().setQuery(query, new SnapshotParser<Stock>() {
             @NonNull
             @Override
@@ -63,6 +66,7 @@ public class StocksAdminActivity extends AppCompatActivity implements StocksAdmi
         recyclerView.setAdapter(adapter);
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.admin_menu, menu);
@@ -102,7 +106,7 @@ public class StocksAdminActivity extends AppCompatActivity implements StocksAdmi
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Stock.documentSnapshot=null;
+                Constants.documentSnapshot = null;
                 Intent intent = new Intent(StocksAdminActivity.this, AddStockActivity.class);
                 startActivity(intent);
 
@@ -121,7 +125,7 @@ public class StocksAdminActivity extends AppCompatActivity implements StocksAdmi
 
             @Override
             public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int direction) {
-                deleteStock(adapter.getSnapshots().getSnapshot(viewHolder.getAdapterPosition()),viewHolder.getAdapterPosition());
+                deleteStock(adapter.getSnapshots().getSnapshot(viewHolder.getAdapterPosition()), viewHolder.getAdapterPosition());
 
             }
         }).attachToRecyclerView(recyclerView);
@@ -134,38 +138,54 @@ public class StocksAdminActivity extends AppCompatActivity implements StocksAdmi
     }
 
     @Override
-    public void deleteStock(final DocumentSnapshot documentSnapshot,final int position) {
+    public void deleteStock(final DocumentSnapshot documentSnapshot, final int position) {
         new MaterialAlertDialogBuilder(this).setBackground(getDrawable(R.drawable.button_first)).setIcon(R.drawable.ic_delete).setTitle("delete").setMessage("Are you sure you want to delete ").setNegativeButton("no", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-             }
+                adapter.notifyItemChanged(position);
+            }
         }).setPositiveButton("yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                deleteStockConfirmed(documentSnapshot,position);
+                deleteStockConfirmed(documentSnapshot, position);
             }
         }).show();
     }
 
     private void deleteStockConfirmed(DocumentSnapshot documentSnapshot, final int position) {
-      documentSnapshot.getReference().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-          @Override
-          public void onComplete(@NonNull Task<Void> task) {
-              if(task.isSuccessful()){
-                  adapter.notifyItemRemoved(position);
-                  Toasty.success(StocksAdminActivity.this,"Deletion Success").show();
-              }else {
-                  Toasty.error(StocksAdminActivity.this,"Deletion Success").show();
 
-              }
+        ///////delete photo///////
 
-          }
-      });
+        FirebaseStorage.getInstance().getReferenceFromUrl(documentSnapshot.getString("imageUrl")).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toasty.success(StocksAdminActivity.this, "photo Deletion Success").show();
+                } else {
+                    Toasty.error(StocksAdminActivity.this, "Error :" + task.getException().getMessage()).show();
+
+                }
+            }
+        });
+
+        /////////////delete document//////////
+        documentSnapshot.getReference().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                   Toasty.success(StocksAdminActivity.this, " Data Deletion Success").show();
+                } else {
+                    Toasty.error(StocksAdminActivity.this, "Error:  " + task.getException().getMessage()).show();
+
+                }
+
+            }
+        });
     }
 
     @Override
     public void editStock(DocumentSnapshot documentSnapshot) {
-        Stock.documentSnapshot = documentSnapshot;
+        Constants.documentSnapshot = documentSnapshot;
         startActivity(new Intent(this, AddStockActivity.class));
     }
 }

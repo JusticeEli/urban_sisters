@@ -22,7 +22,6 @@ public class StocksCustomerAdapter extends FirestoreRecyclerAdapter<Stock, Stock
 
     private Context context;
 
-    private StocksAdminActivity stocksAdminActivity;
 
     private ItemClicked itemClicked;
 
@@ -30,7 +29,6 @@ public class StocksCustomerAdapter extends FirestoreRecyclerAdapter<Stock, Stock
     public StocksCustomerAdapter(Context context, @NonNull FirestoreRecyclerOptions<Stock> options) {
         super(options);
         this.context = context;
-        stocksAdminActivity = (StocksAdminActivity) context;
         itemClicked = (ItemClicked) context;
     }
 
@@ -42,7 +40,7 @@ public class StocksCustomerAdapter extends FirestoreRecyclerAdapter<Stock, Stock
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.centerCrop();
         requestOptions.placeholder(R.mipmap.ic_launcher_round);
-        Glide.with(context).applyDefaultRequestOptions(requestOptions).load(model.getImageUrl());
+        Glide.with(context).applyDefaultRequestOptions(requestOptions).load(model.getImageUrl()).into(holder.imageView);
 
 
     }

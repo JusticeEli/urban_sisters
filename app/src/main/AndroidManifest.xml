@@ -9,13 +9,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".OrdersCustomerActivity"></activity>
-        <activity android:name=".StocksCustomerActivity" />
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
+
+        <activity
+            android:name=".OrdersCustomerActivity"
+            android:launchMode="singleTop"></activity>
+        <activity
+            android:name=".StocksCustomerActivity"
+            android:launchMode="singleTop" />
         <activity android:name=".AddStockActivity" />
-        <activity android:name=".StocksAdminActivity" />
+        <activity
+            android:name=".StocksAdminActivity"
+            android:launchMode="singleTop" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" />
-        <activity android:name=".OrdersMainActivity">
+        <activity
+            android:name=".OrdersMainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

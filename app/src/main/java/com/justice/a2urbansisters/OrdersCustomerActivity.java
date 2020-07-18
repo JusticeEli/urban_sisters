@@ -33,6 +33,9 @@ import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
 
+import static com.justice.a2urbansisters.Constants.PERSONAL_ORDERS;
+import static com.justice.a2urbansisters.Constants.STOCKS;
+
 public class OrdersCustomerActivity extends AppCompatActivity implements OrderCustomerAdapter.ItemClicked {
 
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -43,10 +46,10 @@ public class OrdersCustomerActivity extends AppCompatActivity implements OrderCu
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_orders_customer);
         setUpRecyclerView();
         setUpSwipeListener();
-        setTitle("Orders");
+        setTitle("Orders...");
     }
 
     private void setUpSwipeListener() {
@@ -116,7 +119,7 @@ public class OrdersCustomerActivity extends AppCompatActivity implements OrderCu
 
     private void setUpRecyclerView() {
         recyclerView = findViewById(R.id.recyclerView);
-        Query query = firebaseFirestore.collection(OrdersMainActivity.STOCKS).document(firebaseAuth.getUid()).collection(OrdersMainActivity.PERSONAL_ORDERS);
+        Query query = firebaseFirestore.collection(STOCKS).document(firebaseAuth.getUid()).collection(PERSONAL_ORDERS);
         FirestoreRecyclerOptions<Stock> firestoreRecyclerOptions = new FirestoreRecyclerOptions.Builder<Stock>().setQuery(query,
                 new SnapshotParser<Stock>() {
                     @NonNull

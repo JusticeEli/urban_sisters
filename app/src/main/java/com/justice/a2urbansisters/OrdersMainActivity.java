@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.firebase.ui.firestore.SnapshotParser;
@@ -31,23 +33,69 @@ import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
 
+import static com.justice.a2urbansisters.Constants.PERSONAL_ORDERS;
+import static com.justice.a2urbansisters.Constants.STOCKS;
+
 
 public class OrdersMainActivity extends AppCompatActivity implements MainAdapter.ItemClicked, CustomDialogAdapter.ItemClicked {
-    public static final String STOCKS = "stocks";
-    public static final String PERSONAL_ORDERS = "personal_orders";
 
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private MainAdapter adapter;
     private RecyclerView recyclerView;
+    private Button addButton;
+    private ProgressDialog progressDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initWidgets();
+        setOnClickListeners();
         setUpRecyclerView();
-        setTitle("All appointments booked by clients");
+        setUpSwipeListener();
+        setTitle("Orders");
         checkIfUserIsLoggedIn_andIsCustomerOrAdmin();
+    }
+
+    private void setUpSwipeListener() {
+
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int direction) {
+                adapter.getSnapshots().getSnapshot(viewHolder.getAdapterPosition()).getReference().delete().addOnCompleteListener(null);
+            }
+        }).attachToRecyclerView(recyclerView);
+    }
+
+    private void setOnClickListeners() {
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Constants.documentSnapshot = null;
+                Intent intent = new Intent(OrdersMainActivity.this, AddStockActivity.class);
+                startActivity(intent);
+
+            }
+        });
+
+    }
+
+    private void initWidgets() {
+        addButton = findViewById(R.id.addBtn);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Login user in");
+        progressDialog.setMessage("please wait...");
+        progressDialog.setCancelable(false);
+
     }
 
     private void checkIfUserIsLoggedIn_andIsCustomerOrAdmin() {
@@ -63,18 +111,22 @@ public class OrdersMainActivity extends AppCompatActivity implements MainAdapter
     }
 
     private void checkIfIsCustomerOrAdmin() {
+        progressDialog.show();
         firebaseFirestore.collection(RegisterActivity.ADMIN_CUSTOMER).document(firebaseAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
 
                     if (!task.getResult().getBoolean("isAdmin")) {
+                        Constants.isAdmin = false;
+
                         startActivity(new Intent(OrdersMainActivity.this, StocksCustomerActivity.class));
                         finish();
                     }
                 } else {
                     Toasty.error(OrdersMainActivity.this, "Error: " + task.getException().getMessage()).show();
                 }
+                progressDialog.dismiss();
             }
         });
 
@@ -153,7 +205,7 @@ public class OrdersMainActivity extends AppCompatActivity implements MainAdapter
 
 
     @Override
-    public void approveAppointment(DocumentSnapshot document, final boolean approved) {
+    public void approveDelivery(DocumentSnapshot document, final boolean approved) {
 
         Map<String, Object> map = new HashMap<>();
         map.put("delivered", approved);
@@ -165,7 +217,7 @@ public class OrdersMainActivity extends AppCompatActivity implements MainAdapter
                         //         Toasty.success(AppointMentActivity.this, "Appointment Approved successfully").show();
 
                     } else {
-                        Toasty.success(OrdersMainActivity.this, "Delivered").show();
+                  //      Toasty.success(OrdersMainActivity.this, "Delivered").show();
 
                     }
 
@@ -196,7 +248,7 @@ public class OrdersMainActivity extends AppCompatActivity implements MainAdapter
         builder.setView(dialogView);
         builder.setTitle("Orders by " + personalOrder.getEmail());
 
-        RecyclerView rv = (RecyclerView) dialogView.findViewById(R.id.rv);
+        RecyclerView rv = dialogView.findViewById(R.id.rv);
 
         Query query = firebaseFirestore.collection(STOCKS).document(personalOrder.getId()).collection(PERSONAL_ORDERS);
         FirestoreRecyclerOptions<Stock> firestoreRecyclerOptions = new FirestoreRecyclerOptions.Builder<Stock>().setQuery(query,
@@ -215,7 +267,7 @@ public class OrdersMainActivity extends AppCompatActivity implements MainAdapter
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(dialogAdapter);
 
-///////////////set up swipe listener ///// so that supervisor can delete the appointment by scrolling of the screen//////////
+///////////////set up swipe listener ///// so that admin can delete the order by scrolling of the screen//////////
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -225,7 +277,7 @@ public class OrdersMainActivity extends AppCompatActivity implements MainAdapter
 
             @Override
             public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int direction) {
-                deleteAppointment(viewHolder.getAdapterPosition(), dialogAdapter);
+                deleteOrder(viewHolder.getAdapterPosition(), dialogAdapter);
 
             }
         }).attachToRecyclerView(rv);
@@ -243,12 +295,12 @@ public class OrdersMainActivity extends AppCompatActivity implements MainAdapter
          */
     }
 
-    private void deleteAppointment(int adapterPosition, CustomDialogAdapter dialogAdapter) {
+    private void deleteOrder(int adapterPosition, CustomDialogAdapter dialogAdapter) {
         dialogAdapter.getSnapshots().getSnapshot(adapterPosition).getReference().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    Toasty.success(OrdersMainActivity.this, "Appointment Deleted").show();
+                    Toasty.success(OrdersMainActivity.this, "Order Deleted").show();
 
                 } else {
                     Toasty.success(OrdersMainActivity.this, "Error: " + task.getException().getMessage()).show();

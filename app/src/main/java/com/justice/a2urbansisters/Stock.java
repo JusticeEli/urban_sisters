@@ -1,9 +1,10 @@
 package com.justice.a2urbansisters;
 
+import android.net.Uri;
+
 import com.google.firebase.firestore.DocumentSnapshot;
 
 public class Stock {
-    public static DocumentSnapshot documentSnapshot;
     private String id;
     private String name;
     private String imageUrl;
@@ -12,6 +13,7 @@ public class Stock {
 
     public Stock() {
     }
+
 
     public String getName() {
         return name;

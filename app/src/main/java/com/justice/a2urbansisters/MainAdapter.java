@@ -36,11 +36,11 @@ public class MainAdapter extends FirestoreRecyclerAdapter<PersonalOrder, MainAda
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull final ViewHolder holder, int position, @NonNull final PersonalOrder model) {
+    protected void onBindViewHolder(@NonNull final ViewHolder holder, final int position, @NonNull final PersonalOrder model) {
         holder.emailTxtView.setText(model.getEmail());
 
         ///////getting number of appointments for each user//////////
-        getSnapshots().getSnapshot(position).getReference().collection(OrdersMainActivity.PERSONAL_ORDERS).addSnapshotListener((AppCompatActivity) context, new EventListener<QuerySnapshot>() {
+        getSnapshots().getSnapshot(position).getReference().collection(Constants.PERSONAL_ORDERS).addSnapshotListener((AppCompatActivity) context, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
@@ -48,6 +48,10 @@ public class MainAdapter extends FirestoreRecyclerAdapter<PersonalOrder, MainAda
                     return;
                 }
                 holder.numberOfAppointmentsTextView.setText(queryDocumentSnapshots.size() + "");
+                if (queryDocumentSnapshots.size()==0){
+                    getSnapshots().getSnapshot(position).getReference().delete().addOnCompleteListener(null);
+                }
+
             }
         });
 

@@ -22,15 +22,19 @@ import com.google.firebase.firestore.Query;
 
 import es.dmoral.toasty.Toasty;
 
+import static com.justice.a2urbansisters.Constants.ALL_STOCKS;
+import static com.justice.a2urbansisters.Constants.PERSONAL_ORDERS;
+import static com.justice.a2urbansisters.Constants.STOCKS;
+
 public class StocksCustomerActivity extends AppCompatActivity implements StocksCustomerAdapter.ItemClicked {
-    private StocksAdminAdapter adapter;
+    private StocksCustomerAdapter adapter;
     private RecyclerView recyclerView;
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_stocks);
+        setContentView(R.layout.activity_stocks_customer);
         setTitle("Stocks List");
         initwidgets();
         setUpRecyclerView();
@@ -38,7 +42,7 @@ public class StocksCustomerActivity extends AppCompatActivity implements StocksC
     }
 
     private void setUpRecyclerView() {
-        Query query = firebaseFirestore.collection(OrdersMainActivity.STOCKS);
+        Query query = firebaseFirestore.collection(ALL_STOCKS);
         FirestoreRecyclerOptions<Stock> firestoreRecyclerOptions = new FirestoreRecyclerOptions.Builder<Stock>().setQuery(query, new SnapshotParser<Stock>() {
             @NonNull
             @Override
@@ -50,7 +54,7 @@ public class StocksCustomerActivity extends AppCompatActivity implements StocksC
         }).setLifecycleOwner(StocksCustomerActivity.this).build();
 
 
-        adapter = new StocksAdminAdapter(this, firestoreRecyclerOptions);
+        adapter = new StocksCustomerAdapter(this, firestoreRecyclerOptions);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
@@ -97,8 +101,13 @@ public class StocksCustomerActivity extends AppCompatActivity implements StocksC
 
     @Override
     public void itemClicked(Stock stock) {
+        PersonalOrder personalOrder = new PersonalOrder();
+        personalOrder.setEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        personalOrder.setId(FirebaseAuth.getInstance().getUid());
 
-        firebaseFirestore.collection(OrdersMainActivity.STOCKS).document(FirebaseAuth.getInstance().getUid()).collection(OrdersMainActivity.PERSONAL_ORDERS).add(stock).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+        firebaseFirestore.collection(STOCKS).document(FirebaseAuth.getInstance().getUid()).set(personalOrder).addOnCompleteListener(null);
+
+        firebaseFirestore.collection(STOCKS).document(FirebaseAuth.getInstance().getUid()).collection(PERSONAL_ORDERS).add(stock).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if (task.isSuccessful()) {

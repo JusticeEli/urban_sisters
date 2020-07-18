@@ -27,7 +27,7 @@
         android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:background="@drawable/button"
-        android:text="Add Student"
+        android:text="Add Product"
         android:textAllCaps="false" />
 
 

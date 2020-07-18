@@ -9,8 +9,6 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -18,12 +16,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import es.dmoral.toasty.Toasty;
 
 public class OrderCustomerAdapter extends FirestoreRecyclerAdapter<Stock, OrderCustomerAdapter.ViewHolder> {
 
@@ -44,11 +38,11 @@ public class OrderCustomerAdapter extends FirestoreRecyclerAdapter<Stock, OrderC
         holder.nameTxtView.setText(model.getName());
         holder.priceTxtView.setText(model.getPrice() + "");
         holder.deliveredCheckBox.setChecked(model.isDelivered());
-
+        holder.deliveredCheckBox.setEnabled(false);
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.centerCrop();
         requestOptions.placeholder(R.mipmap.ic_launcher_round);
-        Glide.with(context).applyDefaultRequestOptions(requestOptions).load(model.getImageUrl());
+        Glide.with(context).applyDefaultRequestOptions(requestOptions).load(model.getImageUrl()).into(holder.imageView);
 
         if (model.isDelivered()) {
             holder.deliveredCheckBox.setText("is delivered");
@@ -63,7 +57,7 @@ public class OrderCustomerAdapter extends FirestoreRecyclerAdapter<Stock, OrderC
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_dialog, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_order_customer, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
 
@@ -78,7 +72,7 @@ public class OrderCustomerAdapter extends FirestoreRecyclerAdapter<Stock, OrderC
         public ViewHolder(@NonNull View v) {
             super(v);
             imageView = v.findViewById(R.id.imageView);
-            nameTxtView = v.findViewById(R.id.nameTextView);
+            nameTxtView = v.findViewById(R.id.nameTxtView);
             priceTxtView = v.findViewById(R.id.priceTxtView);
             deleteTxtView = v.findViewById(R.id.deleteTxtView);
             deliveredCheckBox = v.findViewById(R.id.deliveredCheckBox);

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="20dp"
+    android:layout_marginTop="5dp"
     app:cardCornerRadius="20dp"
     app:cardElevation="20dp">
 
@@ -18,8 +18,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imageView"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:scaleType="centerCrop"
             android:src="@mipmap/ic_launcher" />
 
@@ -32,9 +32,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
                 android:orientation="vertical">
-
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -46,10 +44,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=" Name: "
-                        android:textColor="@color/colorAccent" />
+                        android:textColor="@android:color/black" />
 
                     <TextView
-                        android:id="@+id/nameTextView"
+                        android:id="@+id/nameTxtView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="hairdress" />
@@ -68,7 +66,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=" price: "
-                        android:textColor="@color/colorAccent" />
+                        android:textColor="@android:color/black" />
 
 
                     <TextView
@@ -83,6 +81,28 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/deliveredCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="not delivered" />
+
+                <TextView
+                    android:id="@+id/deleteTxtView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="15dp"
+                    android:text="Delete"
+                    android:textColor="@color/colorAccent" />
+
+
+            </LinearLayout>
 
         </LinearLayout>
 
