@@ -1,11 +1,4 @@
-package com.justice.a2urbansisters;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+package com.justice.a2urbansisters.admin;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -17,6 +10,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.firebase.ui.firestore.SnapshotParser;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -27,6 +27,14 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
+import com.justice.a2urbansisters.AddEditStockActivity;
+import com.justice.a2urbansisters.Constants;
+import com.justice.a2urbansisters.CustomDialogAdapter;
+import com.justice.a2urbansisters.login_register.LoginActivity;
+import com.justice.a2urbansisters.R;
+import com.justice.a2urbansisters.customer.StocksCustomerActivity;
+import com.justice.a2urbansisters.modal.PersonalOrder;
+import com.justice.a2urbansisters.modal.Stock;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,20 +45,20 @@ import static com.justice.a2urbansisters.Constants.PERSONAL_ORDERS;
 import static com.justice.a2urbansisters.Constants.STOCKS;
 
 
-public class OrdersMainActivity extends AppCompatActivity implements MainAdapter.ItemClicked, CustomDialogAdapter.ItemClicked {
-
-    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-    private MainAdapter adapter;
+public class OrdersAdminMainActivity extends AppCompatActivity implements OrdersAdminMainAdapter.ItemClicked, CustomDialogAdapter.ItemClicked {
+    ////widgets
     private RecyclerView recyclerView;
     private Button addButton;
     private ProgressDialog progressDialog;
-
+    /////////firebase
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+    private OrdersAdminMainAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_order_admin_main);
         initWidgets();
         setOnClickListeners();
         setUpRecyclerView();
@@ -60,8 +68,6 @@ public class OrdersMainActivity extends AppCompatActivity implements MainAdapter
     }
 
     private void setUpSwipeListener() {
-
-
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -81,7 +87,7 @@ public class OrdersMainActivity extends AppCompatActivity implements MainAdapter
             @Override
             public void onClick(View v) {
                 Constants.documentSnapshot = null;
-                Intent intent = new Intent(OrdersMainActivity.this, AddStockActivity.class);
+                Intent intent = new Intent(OrdersAdminMainActivity.this, AddEditStockActivity.class);
                 startActivity(intent);
 
             }
@@ -111,8 +117,11 @@ public class OrdersMainActivity extends AppCompatActivity implements MainAdapter
     }
 
     private void checkIfIsCustomerOrAdmin() {
+        recyclerView.setVisibility(View.INVISIBLE);
+        addButton.setVisibility(View.INVISIBLE);
+
         progressDialog.show();
-        firebaseFirestore.collection(RegisterActivity.ADMIN_CUSTOMER).document(firebaseAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        firebaseFirestore.collection(Constants.ADMIN_CUSTOMER).document(firebaseAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -120,12 +129,15 @@ public class OrdersMainActivity extends AppCompatActivity implements MainAdapter
                     if (!task.getResult().getBoolean("isAdmin")) {
                         Constants.isAdmin = false;
 
-                        startActivity(new Intent(OrdersMainActivity.this, StocksCustomerActivity.class));
+                        startActivity(new Intent(OrdersAdminMainActivity.this, StocksCustomerActivity.class));
                         finish();
                     }
                 } else {
-                    Toasty.error(OrdersMainActivity.this, "Error: " + task.getException().getMessage()).show();
+                    Toasty.error(OrdersAdminMainActivity.this, "Error: " + task.getException().getMessage()).show();
                 }
+                recyclerView.setVisibility(View.VISIBLE);
+                addButton.setVisibility(View.VISIBLE);
+
                 progressDialog.dismiss();
             }
         });
@@ -144,7 +156,7 @@ public class OrdersMainActivity extends AppCompatActivity implements MainAdapter
 
         switch (item.getItemId()) {
             case R.id.orderItem:
-                startActivity(new Intent(this, OrdersMainActivity.class));
+                startActivity(new Intent(this, OrdersAdminMainActivity.class));
                 break;
             case R.id.stockItem:
                 startActivity(new Intent(this, StocksAdminActivity.class));
@@ -194,10 +206,10 @@ public class OrdersMainActivity extends AppCompatActivity implements MainAdapter
                         PersonalOrder personalOrder = snapshot.toObject(PersonalOrder.class);
                         return personalOrder;
                     }
-                }).setLifecycleOwner(OrdersMainActivity.this).build();
+                }).setLifecycleOwner(OrdersAdminMainActivity.this).build();
 
 
-        adapter = new MainAdapter(this, firestoreRecyclerOptions);
+        adapter = new OrdersAdminMainAdapter(this, firestoreRecyclerOptions);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
@@ -217,12 +229,12 @@ public class OrdersMainActivity extends AppCompatActivity implements MainAdapter
                         //         Toasty.success(AppointMentActivity.this, "Appointment Approved successfully").show();
 
                     } else {
-                  //      Toasty.success(OrdersMainActivity.this, "Delivered").show();
+                        //      Toasty.success(OrdersMainActivity.this, "Delivered").show();
 
                     }
 
                 } else {
-                    Toasty.error(OrdersMainActivity.this, "Error; " + task.getException().getMessage()).show();
+                    Toasty.error(OrdersAdminMainActivity.this, "Error; " + task.getException().getMessage()).show();
 
                 }
             }
@@ -261,9 +273,9 @@ public class OrdersMainActivity extends AppCompatActivity implements MainAdapter
                         stock.setId(snapshot.getId());
                         return stock;
                     }
-                }).setLifecycleOwner(OrdersMainActivity.this).build();
+                }).setLifecycleOwner(OrdersAdminMainActivity.this).build();
 
-        final CustomDialogAdapter dialogAdapter = new CustomDialogAdapter(OrdersMainActivity.this, firestoreRecyclerOptions);
+        final CustomDialogAdapter dialogAdapter = new CustomDialogAdapter(OrdersAdminMainActivity.this, firestoreRecyclerOptions);
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(dialogAdapter);
 
@@ -300,10 +312,10 @@ public class OrdersMainActivity extends AppCompatActivity implements MainAdapter
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    Toasty.success(OrdersMainActivity.this, "Order Deleted").show();
+                    Toasty.success(OrdersAdminMainActivity.this, "Order Deleted").show();
 
                 } else {
-                    Toasty.success(OrdersMainActivity.this, "Error: " + task.getException().getMessage()).show();
+                    Toasty.success(OrdersAdminMainActivity.this, "Error: " + task.getException().getMessage()).show();
 
                 }
             }

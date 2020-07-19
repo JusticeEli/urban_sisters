@@ -1,8 +1,4 @@
-package com.justice.a2urbansisters;
-
-import android.net.Uri;
-
-import com.google.firebase.firestore.DocumentSnapshot;
+package com.justice.a2urbansisters.modal;
 
 public class Stock {
     private String id;
@@ -27,9 +23,6 @@ public class Stock {
         return delivered;
     }
 
-    public void setDelivered(boolean delivered) {
-        this.delivered = delivered;
-    }
 
     public void setId(String id) {
         this.id = id;

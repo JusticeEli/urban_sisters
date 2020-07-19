@@ -1,8 +1,5 @@
 package com.justice.a2urbansisters;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,17 +9,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.justice.a2urbansisters.modal.Stock;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -33,7 +32,7 @@ import es.dmoral.toasty.Toasty;
 
 import static com.justice.a2urbansisters.Constants.ALL_STOCKS;
 
-public class AddStockActivity extends AppCompatActivity {
+public class AddEditStockActivity extends AppCompatActivity {
     private EditText nameEdtTxt, priceEdtTxt;
     private Button submitBtn;
     private ProgressDialog progressDialog;
@@ -116,15 +115,15 @@ public class AddStockActivity extends AppCompatActivity {
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!editing){
+                if (!editing) {
                     if (uri == null) {
-                        Toasty.error(AddStockActivity.this, "Please click on the circle to  choose a photo", Toast.LENGTH_SHORT).show();
+                        Toasty.error(AddEditStockActivity.this, "Please click on the circle to  choose a photo", Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
 
                 if (fieldsAreEmpty()) {
-                    Toasty.error(AddStockActivity.this, "Please Fill All Fields", Toast.LENGTH_SHORT).show();
+                    Toasty.error(AddEditStockActivity.this, "Please Fill All Fields", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 getDataFromEdtTxtAndSaveInDatabase();
@@ -165,7 +164,7 @@ public class AddStockActivity extends AppCompatActivity {
 
     }
 
-    private void putDataIntoDatabase() {
+    private void putDataIntoDatabaseAdd() {
         progressDialog.show();
 
         firebaseFirestore.collection(ALL_STOCKS).add(stock).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
@@ -175,18 +174,18 @@ public class AddStockActivity extends AppCompatActivity {
 
                     if (task.isSuccessful()) {
                         resetEdtTxt();
-                        Toasty.success(AddStockActivity.this, "Stock Added ", Toast.LENGTH_SHORT).show();
+                        Toasty.success(AddEditStockActivity.this, "Stock Added ", Toast.LENGTH_SHORT).show();
 
                     } else {
                         String error = task.getException().getMessage();
-                        Toasty.error(AddStockActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show();
+                        Toasty.error(AddEditStockActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show();
 
                     }
 
 
                 } else {
                     String error = task.getException().getMessage();
-                    Toasty.error(AddStockActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show();
+                    Toasty.error(AddEditStockActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show();
 
                 }
                 progressDialog.dismiss();
@@ -226,16 +225,16 @@ public class AddStockActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     Uri downloadUri = task.getResult();
                     stock.setImageUrl(downloadUri.toString());
-                    Toasty.success(AddStockActivity.this, "Photo Uploaded", Toast.LENGTH_SHORT).show();
+                    Toasty.success(AddEditStockActivity.this, "Photo Uploaded", Toast.LENGTH_SHORT).show();
                     if (editing) {
                         putDataIntoDatabaseEdit();
                     } else {
-                        putDataIntoDatabase();
+                        putDataIntoDatabaseAdd();
                     }
 
                 } else {
                     String error = task.getException().getMessage();
-                    Toasty.error(AddStockActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show();
+                    Toasty.error(AddEditStockActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show();
                 }
                 progressDialog.dismiss();
             }
@@ -250,11 +249,11 @@ public class AddStockActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<Void> task) {
 
                 if (task.isSuccessful()) {
-                    Toasty.success(AddStockActivity.this, "Stock UPDATED ", Toast.LENGTH_SHORT).show();
+                    Toasty.success(AddEditStockActivity.this, "Stock UPDATED ", Toast.LENGTH_SHORT).show();
 
                 } else {
                     String error = task.getException().getMessage();
-                    Toasty.error(AddStockActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show();
+                    Toasty.error(AddEditStockActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show();
 
                 }
 

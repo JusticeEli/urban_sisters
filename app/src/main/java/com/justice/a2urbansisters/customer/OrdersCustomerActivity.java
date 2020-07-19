@@ -1,35 +1,27 @@
-package com.justice.a2urbansisters;
+package com.justice.a2urbansisters.customer;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.firebase.ui.firestore.SnapshotParser;
-import com.google.android.gms.dynamic.IFragmentWrapper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.SetOptions;
-import com.google.gson.internal.$Gson$Preconditions;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.justice.a2urbansisters.login_register.LoginActivity;
+import com.justice.a2urbansisters.R;
+import com.justice.a2urbansisters.modal.Stock;
 
 import es.dmoral.toasty.Toasty;
 
@@ -40,7 +32,9 @@ public class OrdersCustomerActivity extends AppCompatActivity implements OrderCu
 
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+
     private OrderCustomerAdapter adapter;
+
     private RecyclerView recyclerView;
 
     @Override
@@ -83,6 +77,7 @@ public class OrdersCustomerActivity extends AppCompatActivity implements OrderCu
                 break;
             case R.id.stockItem:
                 startActivity(new Intent(this, StocksCustomerActivity.class));
+                overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
                 break;
             case R.id.logoutItem:
                 logoutUser();
@@ -141,8 +136,6 @@ public class OrdersCustomerActivity extends AppCompatActivity implements OrderCu
 
     @Override
     public void deleteOrder(DocumentSnapshot document, int position) {
-
-
         document.getReference().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {

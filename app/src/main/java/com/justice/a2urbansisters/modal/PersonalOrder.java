@@ -1,4 +1,4 @@
-package com.justice.a2urbansisters;
+package com.justice.a2urbansisters.modal;
 
 public class PersonalOrder {
     private String id;
@@ -24,11 +24,5 @@ public class PersonalOrder {
         this.email = email;
     }
 
-    public long getNumberOfOrders() {
-        return numberOfOrders;
-    }
 
-    public void setNumberOfOrders(long numberOfOrders) {
-        this.numberOfOrders = numberOfOrders;
-    }
 }

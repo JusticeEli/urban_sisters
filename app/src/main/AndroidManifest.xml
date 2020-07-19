@@ -14,19 +14,19 @@
             android:theme="@style/Base.Theme.AppCompat" />
 
         <activity
-            android:name=".OrdersCustomerActivity"
+            android:name=".customer.OrdersCustomerActivity"
             android:launchMode="singleTop"></activity>
         <activity
-            android:name=".StocksCustomerActivity"
+            android:name=".customer.StocksCustomerActivity"
             android:launchMode="singleTop" />
-        <activity android:name=".AddStockActivity" />
+        <activity android:name=".AddEditStockActivity" />
         <activity
-            android:name=".StocksAdminActivity"
+            android:name=".admin.StocksAdminActivity"
             android:launchMode="singleTop" />
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".login_register.RegisterActivity" />
+        <activity android:name=".login_register.LoginActivity" />
         <activity
-            android:name=".OrdersMainActivity"
+            android:name=".admin.OrdersAdminMainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

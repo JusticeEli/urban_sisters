@@ -1,4 +1,4 @@
-package com.justice.a2urbansisters;
+package com.justice.a2urbansisters.admin;
 
 
 import android.content.Context;
@@ -18,17 +18,19 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.justice.a2urbansisters.Constants;
+import com.justice.a2urbansisters.R;
+import com.justice.a2urbansisters.modal.PersonalOrder;
 
 import es.dmoral.toasty.Toasty;
 
-public class MainAdapter extends FirestoreRecyclerAdapter<PersonalOrder, MainAdapter.ViewHolder> {
+public class OrdersAdminMainAdapter extends FirestoreRecyclerAdapter<PersonalOrder, OrdersAdminMainAdapter.ViewHolder> {
 
     private Context context;
-
     private ItemClicked itemClicked;
 
 
-    public MainAdapter(Context context, @NonNull FirestoreRecyclerOptions<PersonalOrder> options) {
+    public OrdersAdminMainAdapter(Context context, @NonNull FirestoreRecyclerOptions<PersonalOrder> options) {
         super(options);
         this.context = context;
         itemClicked = (ItemClicked) context;
@@ -48,7 +50,7 @@ public class MainAdapter extends FirestoreRecyclerAdapter<PersonalOrder, MainAda
                     return;
                 }
                 holder.numberOfAppointmentsTextView.setText(queryDocumentSnapshots.size() + "");
-                if (queryDocumentSnapshots.size()==0){
+                if (queryDocumentSnapshots.size() == 0) {
                     getSnapshots().getSnapshot(position).getReference().delete().addOnCompleteListener(null);
                 }
 
@@ -62,7 +64,7 @@ public class MainAdapter extends FirestoreRecyclerAdapter<PersonalOrder, MainAda
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_main, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_order_admin_main, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
 
@@ -78,7 +80,7 @@ public class MainAdapter extends FirestoreRecyclerAdapter<PersonalOrder, MainAda
             numberOfAppointmentsTextView = v.findViewById(R.id.numberOfAppointmentTxtView);
 
             v.setOnClickListener(this);
-            //        v.setOnLongClickListener(this);
+
         }
 
         @Override

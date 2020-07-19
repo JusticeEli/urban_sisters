@@ -1,10 +1,4 @@
-package com.justice.a2urbansisters;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+package com.justice.a2urbansisters.admin;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +7,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.firebase.ui.firestore.SnapshotParser;
@@ -24,6 +24,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
+import com.justice.a2urbansisters.AddEditStockActivity;
+import com.justice.a2urbansisters.Constants;
+import com.justice.a2urbansisters.login_register.LoginActivity;
+import com.justice.a2urbansisters.R;
+import com.justice.a2urbansisters.modal.Stock;
 
 import es.dmoral.toasty.Toasty;
 
@@ -33,6 +38,7 @@ public class StocksAdminActivity extends AppCompatActivity implements StocksAdmi
     private StocksAdminAdapter adapter;
     private RecyclerView recyclerView;
     private Button addButton;
+
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
 
     @Override
@@ -40,7 +46,6 @@ public class StocksAdminActivity extends AppCompatActivity implements StocksAdmi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stocks_admin);
         setTitle("Stocks List");
-
         initwidgets();
         setOnClickListeners();
         setUpRecyclerView();
@@ -78,7 +83,7 @@ public class StocksAdminActivity extends AppCompatActivity implements StocksAdmi
 
         switch (item.getItemId()) {
             case R.id.orderItem:
-                startActivity(new Intent(this, OrdersMainActivity.class));
+                startActivity(new Intent(this, OrdersAdminMainActivity.class));
                 break;
             case R.id.stockItem:
                 startActivity(new Intent(this, StocksAdminActivity.class));
@@ -107,7 +112,7 @@ public class StocksAdminActivity extends AppCompatActivity implements StocksAdmi
             @Override
             public void onClick(View v) {
                 Constants.documentSnapshot = null;
-                Intent intent = new Intent(StocksAdminActivity.this, AddStockActivity.class);
+                Intent intent = new Intent(StocksAdminActivity.this, AddEditStockActivity.class);
                 startActivity(intent);
 
             }
@@ -173,7 +178,7 @@ public class StocksAdminActivity extends AppCompatActivity implements StocksAdmi
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                   Toasty.success(StocksAdminActivity.this, " Data Deletion Success").show();
+                    Toasty.success(StocksAdminActivity.this, " Data Deletion Success").show();
                 } else {
                     Toasty.error(StocksAdminActivity.this, "Error:  " + task.getException().getMessage()).show();
 
@@ -186,6 +191,6 @@ public class StocksAdminActivity extends AppCompatActivity implements StocksAdmi
     @Override
     public void editStock(DocumentSnapshot documentSnapshot) {
         Constants.documentSnapshot = documentSnapshot;
-        startActivity(new Intent(this, AddStockActivity.class));
+        startActivity(new Intent(this, AddEditStockActivity.class));
     }
 }

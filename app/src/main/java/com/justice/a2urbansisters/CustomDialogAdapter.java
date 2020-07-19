@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.justice.a2urbansisters.modal.Stock;
 
 public class CustomDialogAdapter extends FirestoreRecyclerAdapter<Stock, CustomDialogAdapter.ViewHolder> {
 
@@ -38,7 +39,7 @@ public class CustomDialogAdapter extends FirestoreRecyclerAdapter<Stock, CustomD
         Glide.with(context).load(model.getImageUrl()).into(holder.imageView);
 
         holder.nameTxtView.setText(model.getName());
-        holder.priceTxtView.setText(model.getPrice()+"");
+        holder.priceTxtView.setText(model.getPrice() + "");
         holder.deliveredCheckBox.setChecked(model.isDelivered());
         if (model.isDelivered()) {
             holder.deliveredCheckBox.setText("delivered");
@@ -53,7 +54,7 @@ public class CustomDialogAdapter extends FirestoreRecyclerAdapter<Stock, CustomD
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_dialog_original, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_custom_dialog, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
 
@@ -71,9 +72,8 @@ public class CustomDialogAdapter extends FirestoreRecyclerAdapter<Stock, CustomD
             priceTxtView = v.findViewById(R.id.priceTxtView);
             deliveredCheckBox = v.findViewById(R.id.deliveredCheckBox);
             imageView = v.findViewById(R.id.imageView);
-             deliveredCheckBox.setOnCheckedChangeListener(this);
+            deliveredCheckBox.setOnCheckedChangeListener(this);
         }
-
 
 
         @Override

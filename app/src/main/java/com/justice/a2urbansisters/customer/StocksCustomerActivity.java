@@ -1,4 +1,4 @@
-package com.justice.a2urbansisters;
+package com.justice.a2urbansisters.customer;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +19,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.justice.a2urbansisters.login_register.LoginActivity;
+import com.justice.a2urbansisters.R;
+import com.justice.a2urbansisters.modal.PersonalOrder;
+import com.justice.a2urbansisters.modal.Stock;
 
 import es.dmoral.toasty.Toasty;
 
@@ -72,10 +76,11 @@ public class StocksCustomerActivity extends AppCompatActivity implements StocksC
         switch (item.getItemId()) {
             case R.id.orderItem:
                 startActivity(new Intent(this, OrdersCustomerActivity.class));
+                overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
                 break;
             case R.id.stockItem:
                 startActivity(new Intent(this, StocksCustomerActivity.class));
-                break;
+                 break;
             case R.id.logoutItem:
                 logoutUser();
                 break;

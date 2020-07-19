@@ -1,4 +1,4 @@
-package com.justice.a2urbansisters;
+package com.justice.a2urbansisters.login_register;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,15 +19,18 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.justice.a2urbansisters.R;
+import com.justice.a2urbansisters.admin.OrdersAdminMainActivity;
 
 
 public class LoginActivity extends AppCompatActivity {
+    ///widgets
     private EditText emailEdtTxt, passwordEdtTxt;
     private TextView resetPasswordTxtView, registerTxtView;
     private Button loginBtn;
     private ProgressDialog progressDialog;
-
-    private FirebaseAuth firebaseAuth;
+    ///firebase
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +38,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         initwidgets();
         setUpAnimation();
-
-        firebaseAuth = FirebaseAuth.getInstance();
         setOnClickListeners();
     }
 
@@ -58,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         if (firebaseAuth.getCurrentUser() != null) {
-            startActivity(new Intent(this, OrdersMainActivity.class));
+            startActivity(new Intent(this, OrdersAdminMainActivity.class));
             finish();
 
         }
@@ -81,7 +82,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            startActivity(new Intent(LoginActivity.this, OrdersMainActivity.class));
+                            startActivity(new Intent(LoginActivity.this, OrdersAdminMainActivity.class));
                             finish();
 
                         } else {
@@ -145,6 +146,7 @@ public class LoginActivity extends AppCompatActivity {
         loginBtn = findViewById(R.id.loginBtn);
         registerTxtView = findViewById(R.id.registerTxtView);
 
+///setting up the progress dialog
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Login user in");
         progressDialog.setMessage("please wait...");

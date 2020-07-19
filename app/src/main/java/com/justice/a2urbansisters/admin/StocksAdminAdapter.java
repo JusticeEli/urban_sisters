@@ -1,4 +1,4 @@
-package com.justice.a2urbansisters;
+package com.justice.a2urbansisters.admin;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -14,15 +14,14 @@ import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.justice.a2urbansisters.R;
+import com.justice.a2urbansisters.modal.Stock;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class StocksAdminAdapter extends FirestoreRecyclerAdapter<Stock, StocksAdminAdapter.ViewHolder> {
 
     private Context context;
-
-    private StocksAdminActivity stocksAdminActivity;
-
     private ItemClicked itemClicked;
 
 
@@ -38,7 +37,6 @@ public class StocksAdminAdapter extends FirestoreRecyclerAdapter<Stock, StocksAd
         holder.priceTxtView.setText(model.getPrice() + "");
 
         RequestOptions requestOptions = new RequestOptions();
-        requestOptions.centerCrop();
         requestOptions.placeholder(R.mipmap.ic_launcher_round);
         Glide.with(context).applyDefaultRequestOptions(requestOptions).load(model.getImageUrl()).into(holder.imageView);
 
